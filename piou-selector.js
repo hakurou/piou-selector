@@ -24,6 +24,11 @@ attr		:= [attr]
 			 | [attr~=value]
 
 */
+/**
+ * Lib de selecteur de noeuds
+ * @author hakurou
+ * @version 1.0.0
+ */
 (function(){
 	"use strict";
 	
@@ -33,8 +38,16 @@ attr		:= [attr]
 		
 	////////////////////////////////////////////////
 	var Query = {
+		/**
+		 * Dit s'il est possible d'utiliser le querySelector/querySelectorAll
+		 */
 		qs: (typeof document.querySelector != "undefined"),
 		
+		/**
+		 * Retourne tous les elements dépendant d'un noeud
+		 * @param context				Noeud de base (ex: document)
+		 * @return Array 				Liste de noeuds s'il y en a, sinon null
+		 */
 		getAll: function(context)
 		{
 			if(context.all)
@@ -49,6 +62,14 @@ attr		:= [attr]
 			return e;
 		},
 		
+		/**
+		 * Retourne tous les elements selon un attribut
+		 * @param s						Occurences du pattern concerné
+		 * @param context				Noeud de base (ex: document)
+		 * @param parent				Liste des noeuds parents
+		 * @param nList					Liste des noeuds sur lesquels il faut filtrer
+		 * @return Array				Liste de noeuds s'il y en a, sinon null
+		 */
 		getByAttr: function(s, context, parent, nList)
 		{
 			if(nList != null)
@@ -71,6 +92,14 @@ attr		:= [attr]
 			}
 		},
 		
+		/**
+		 * Retourne tous les elements selon un attribut depuis une liste à filtrer
+		 * @param s						Occurences du pattern concerné
+		 * @param context				Noeud de base (ex: document)
+		 * @param parent				Liste des noeuds parents
+		 * @param nList					Liste des noeuds sur lesquels il faut filtrer
+		 * @return Array				Liste de noeuds s'il y en a, sinon null
+		 */
 		getByAttrIn: function(s, context, parent, nList)
 		{
 			var tmp = [];
@@ -81,6 +110,14 @@ attr		:= [attr]
 			return tmp;
 		},
 		
+		/**
+		 * Retourne tous les elements selon un attribut depuis une liste de noeuds parents
+		 * @param s						Occurences du pattern concerné
+		 * @param context				Noeud de base (ex: document)
+		 * @param parent				Liste des noeuds parents
+		 * @param nList					Liste des noeuds sur lesquels il faut filtrer
+		 * @return Array				Liste de noeuds s'il y en a, sinon null
+		 */
 		getByAttrFrom: function(s, context, parent, nList)
 		{
 			var tmp = [];
@@ -93,6 +130,12 @@ attr		:= [attr]
 			return tmp;
 		},
 		
+		/**
+		 * Dit si l'attribut du nom courant correspond au selecteur
+		 * @param s						Occurences du pattern concerné
+		 * @param node					Noeud a tester
+		 * @return Boolean				Retourne true si l'attribut correspond au selecteur, sinon false
+		 */
 		isAttrOk: function(s, node)
 		{
 			if(s.length == 2)
@@ -119,6 +162,11 @@ attr		:= [attr]
 			return false;
 		},
 		
+		/**
+		 * Protege les caracteres d'un chaine qui correspondent aux clés de regexp
+		 * @param String str			Chaine à traiter
+		 * @return String				Chaine traitée
+		 */
 		regProtect: function(str)
 		{
 			str = str.replace(/\./g, "\\.");
@@ -133,6 +181,14 @@ attr		:= [attr]
 			return str;
 		},
 		
+		/**
+		 * Retourne tous les elements selon un id
+		 * @param s						Occurences du pattern concerné
+		 * @param context				Noeud de base (ex: document)
+		 * @param parent				Liste des noeuds parents
+		 * @param nList					Liste des noeuds sur lesquels il faut filtrer
+		 * @return Array				Liste de noeuds s'il y en a, sinon null
+		 */
 		getById: function(s, context, parent, nList)
 		{
 			if(nList != null)
@@ -147,6 +203,14 @@ attr		:= [attr]
 				return context.getElementById(s[1]);
 		},
 		
+		/**
+		 * Retourne tous les elements selon un id depuis une liste de noeuds parents
+		 * @param s						Occurences du pattern concerné
+		 * @param context				Noeud de base (ex: document)
+		 * @param parent				Liste des noeuds parents
+		 * @param nList					Liste des noeuds sur lesquels il faut filtrer
+		 * @return Array				Liste de noeuds s'il y en a, sinon null
+		 */
 		getByIdFrom: function(s, context, parent, nList)
 		{
 			var e = this.getById(s, context);
@@ -169,6 +233,14 @@ attr		:= [attr]
 			return tmp;
 		},
 		
+		/**
+		 * Retourne tous les elements selon un id sur une liste a filtrer
+		 * @param s						Occurences du pattern concerné
+		 * @param context				Noeud de base (ex: document)
+		 * @param parent				Liste des noeuds parents
+		 * @param nList					Liste des noeuds sur lesquels il faut filtrer
+		 * @return Array				Liste de noeuds s'il y en a, sinon null
+		 */
 		getByIdIn: function(s, context, parent, nList)
 		{
 			var tmp = [];
@@ -179,6 +251,14 @@ attr		:= [attr]
 			return tmp;
 		},
 		
+		/**
+		 * Retourne tous les elements selon une classe
+		 * @param s						Occurences du pattern concerné
+		 * @param context				Noeud de base (ex: document)
+		 * @param parent				Liste des noeuds parents
+		 * @param nList					Liste des noeuds sur lesquels il faut filtrer
+		 * @return Array				Liste de noeuds s'il y en a, sinon null
+		 */
 		getByClass: function(s, context, parent, nList)
 		{
 			if(nList != null)
@@ -195,6 +275,14 @@ attr		:= [attr]
 				return this.getByClass(s, context, parent, this.getAll(context));
 		},
 		
+		/**
+		 * Retourne tous les elements selon une classe depuis une liste de noeuds parents
+		 * @param s						Occurences du pattern concerné
+		 * @param context				Noeud de base (ex: document)
+		 * @param parent				Liste des noeuds parents
+		 * @param nList					Liste des noeuds sur lesquels il faut filtrer
+		 * @return Array				Liste de noeuds s'il y en a, sinon null
+		 */
 		getByClassFrom: function(s, context, parent, nList)
 		{
 			var tmp = [];
@@ -208,6 +296,14 @@ attr		:= [attr]
 			return tmp;
 		},
 		
+		/**
+		 * Retourne tous les elements selon une classe dans une liste de noeuds à filtrer
+		 * @param s						Occurences du pattern concerné
+		 * @param context				Noeud de base (ex: document)
+		 * @param parent				Liste des noeuds parents
+		 * @param nList					Liste des noeuds sur lesquels il faut filtrer
+		 * @return Array				Liste de noeuds s'il y en a, sinon null
+		 */
 		getByClassIn: function(s, context, parent, nList)
 		{
 			var tmp = [];
@@ -218,6 +314,14 @@ attr		:= [attr]
 			return tmp;
 		},
 		
+		/**
+		 * Retourne tous les elements selon un nom de noeud
+		 * @param s						Occurences du pattern concerné
+		 * @param context				Noeud de base (ex: document)
+		 * @param parent				Liste des noeuds parents
+		 * @param nList					Liste des noeuds sur lesquels il faut filtrer
+		 * @return Array				Liste de noeuds s'il y en a, sinon null
+		 */
 		getByTag: function(s, context, parent, nList)
 		{
 			if(nList != null)
@@ -232,6 +336,14 @@ attr		:= [attr]
 				return context.getElementsByTagName(s[1]);				
 		},
 		
+		/**
+		 * Retourne tous les elements selon un nom de noeud sur une liste de noeuds à filtrer
+		 * @param s						Occurences du pattern concerné
+		 * @param context				Noeud de base (ex: document)
+		 * @param parent				Liste des noeuds parents
+		 * @param nList					Liste des noeuds sur lesquels il faut filtrer
+		 * @return Array				Liste de noeuds s'il y en a, sinon null
+		 */
 		getByTagIn: function(s, context, parent, nList)
 		{
 			var tmp = [];
@@ -243,6 +355,14 @@ attr		:= [attr]
 			return tmp;
 		},
 		
+		/**
+		 * Retourne tous les elements selon un nom depuis une liste de noeuds parents
+		 * @param s						Occurences du pattern concerné
+		 * @param context				Noeud de base (ex: document)
+		 * @param parent				Liste des noeuds parents
+		 * @param nList					Liste des noeuds sur lesquels il faut filtrer
+		 * @return Array				Liste de noeuds s'il y en a, sinon null
+		 */
 		getByTagFrom: function(s, context, parent, nList)
 		{
 			var nl = [];
@@ -256,6 +376,14 @@ attr		:= [attr]
 			return nl;
 		},
 		
+		/**
+		 * Retourne tous les elements selon une pseudo classe
+		 * @param s						Occurences du pattern concerné
+		 * @param context				Noeud de base (ex: document)
+		 * @param parent				Liste des noeuds parents
+		 * @param nList					Liste des noeuds sur lesquels il faut filtrer
+		 * @return Array				Liste de noeuds s'il y en a, sinon null
+		 */
 		getByPseu: function(s, context, parent, nList)
 		{
 			var tmp = [];
@@ -276,6 +404,14 @@ attr		:= [attr]
 			}
 		},
 		
+		/**
+		 * Retourne tous les elements selon une pseudo classe sur une liste de noeuds à filtrer
+		 * @param s						Occurences du pattern concerné
+		 * @param context				Noeud de base (ex: document)
+		 * @param parent				Liste des noeuds parents
+		 * @param nList					Liste des noeuds sur lesquels il faut filtrer
+		 * @return Array				Liste de noeuds s'il y en a, sinon null
+		 */
 		getByPseuIn: function(s, context, parent, nList)
 		{
 			var tmp = [];
@@ -291,6 +427,14 @@ attr		:= [attr]
 			return tmp;
 		},
 		
+		/**
+		 * Retourne tous les elements selon une pseudo classe depuis une liste de noeuds parents
+		 * @param s						Occurences du pattern concerné
+		 * @param context				Noeud de base (ex: document)
+		 * @param parent				Liste des noeuds parents
+		 * @param nList					Liste des noeuds sur lesquels il faut filtrer
+		 * @return Array				Liste de noeuds s'il y en a, sinon null
+		 */
 		getByPseuFrom: function(s, context, parent, nList)
 		{
 			var tmp = [];
@@ -303,6 +447,11 @@ attr		:= [attr]
 			return tmp;
 		},
 		
+		/**
+		 * Opère une boucle sur une liste de noeud au nodeType == 1
+		 * @param eList					Liste a itérer
+		 * @param func					Callback à appeler à chaque itération
+		 */
 		each: function(eList, func)
 		{
 			if(eList == null)
@@ -319,9 +468,20 @@ attr		:= [attr]
 	};	
 	
 	////////////////////////////////////////////////
+	/**
+	 * Classe de parsing des selecteurs
+	 */
 	var Parser = (function(){
+		/**
+		 * Constructeur
+		 * @param str					Selecteur
+		 * @param context				Noeud racine, document par defaut
+		 */
 		var Parser = function(str, context)
 		{
+			/**
+			 * Définition des différents lexemes d'un selecteur
+			 */
 			this.pt = {
 				id: 		/^#([\w-]+)/,
 				class:		/^\.([\w-]+)/,
@@ -338,17 +498,26 @@ attr		:= [attr]
 			
 			this.str = str;
 			this.context = context;
-			this.qs = (typeof document.querySelector != "undefined");
 		};
 		
 		Parser.prototype = {
-			parse: function(str)
+			/**
+			 * Amorce la collecte des noeuds
+			 * @return Array			Liste des noeuds trouvés			
+			 */
+			parse: function()
 			{	
 				this.match(this.pt.blank);
 				var r = this.parseExp();
 				return (r != null && r.length == null) ? [r]: r;
 			},
 			
+			/**
+			 * Retourne la liste des noeuds trouvés sur une suite de noeuds fils
+			 * @param parent			Noeuds parents
+			 * @param nList				Liste de noeuds à filtrer
+			 * @return Array			Liste des noeuds trouvés			
+			 */
 			getChildrenExp: function(parent, nList)
 			{
 				var tmp = []; 
@@ -361,6 +530,12 @@ attr		:= [attr]
 				return this.parseExp(parent, tmp);
 			},
 			
+			/**
+			 * Retourne la liste des noeuds trouvés sur une suite de noeuds frères
+			 * @param parent			Noeuds parents
+			 * @param nList				Liste de noeuds à filtrer
+			 * @return Array			Liste des noeuds trouvés			
+			 */
 			getSiblingExp: function(parent, nList)
 			{
 				var tmp = [];
@@ -379,6 +554,12 @@ attr		:= [attr]
 				return this.parseExp(parent, tmp);
 			},
 			
+			/**
+			 * Retourne la liste des noeuds trouvés sur une suite de noeuds qui se suivent
+			 * @param parent			Noeuds parents
+			 * @param nList				Liste de noeuds à filtrer
+			 * @return Array			Liste des noeuds trouvés			
+			 */
 			getNextNodeExp: function(parent, nList)
 			{
 				var tmp = [];
@@ -399,6 +580,12 @@ attr		:= [attr]
 				return this.parseExp(parent, tmp);
 			},
 			
+			/**
+			 * Parse les expressions selon la grammaire définie
+			 * @param parent			Noeuds parents
+			 * @param nList				Liste de noeuds à filtrer
+			 * @return Array			Liste des noeuds trouvés			
+			 */
 			parseExp: function(parent, nList)
 			{
 				var e = this.parseBase(parent, nList);
@@ -418,6 +605,9 @@ attr		:= [attr]
 				return e;
 			},
 			
+			/**
+			 * @see selector.parseExp
+			 */
 			parseBase: function(parent, nList)
 			{
 				var e = null;
@@ -439,11 +629,17 @@ attr		:= [attr]
 				return e;
 			},
 			
+			/**
+			 * @see selector.parseExp
+			 */
 			parseSuit: function(parent, nList)
 			{
 				return this.parseSup(parent, nList);
 			},
 			
+			/**
+			 * @see selector.parseExp
+			 */
 			parseSup: function(parent, nList)
 			{
 				var e = null;
@@ -469,6 +665,9 @@ attr		:= [attr]
 				return e;
 			},
 			
+			/**
+			 * @see selector.parseExp
+			 */
 			parsePseu: function(parent, nList)
 			{
 				var e = null;
@@ -479,6 +678,9 @@ attr		:= [attr]
 				return e;
 			},
 			
+			/**
+			 * @see selector.parseExp
+			 */
 			parseAttr: function(parent, nList)
 			{
 				var e = null;
@@ -489,6 +691,12 @@ attr		:= [attr]
 				return e;
 			},
 			
+			/**
+			 * Trouve le prochain lexeme et deduis son nombre de caractères du
+			 * selecteur courant
+			 * @param pattrn 			Pattern de définition d'un lexeme
+			 * @return Array			Retourne les occurences correspondantes
+			 */
 			match: function(pttrn)
 			{
 				var r = null;
@@ -503,6 +711,12 @@ attr		:= [attr]
 	})();
 	
 	////////////////////////////////////////////////
+	/**
+	 * Demande une selection depuis un selecteur type CSS
+	 * @param str						Selecteur
+	 * @param context					Noeud racine, par defaut "document"
+	 * @param Array						Retourne la liste des noeuds trouvés
+	 */
 	var selector = function(str, context)
 	{
 		if(context == null)
@@ -523,8 +737,14 @@ attr		:= [attr]
 		return nodes;
 	}
 	
+	/**
+	 * Couple Query avec selector afin de pouvoir l'utiliser depuis l'extérieur si besoin
+	 */
 	selector.query = Query;
 	
+	/**
+	 * Liste des fonctions des pseudo-classes, peut être altérée depuis l'extérieur
+	 */
 	selector.pseu = {
 		"first-child": function(){
 			var n = this.parentNode.childNodes;
@@ -549,6 +769,7 @@ attr		:= [attr]
 		"checked": function(){}
 	};
 	
+	selector.version = "1.0.0";
 	window.piou.selector = selector;
 		
 })();
