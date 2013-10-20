@@ -47,6 +47,7 @@ La variable _elements_ est un tableau qui liste les noeuds trouvés si la recher
 Il est possible de créer ses propres pseudo-classes:
 `````javascript
 piou.selector.pseu["foo"] = function(value){
+	// Retourne un boolean, true pour accepter le noeud, false pour le refuser
 	return (/*votre condition, this pointant sur le noeud à tester*/);
 };
 
