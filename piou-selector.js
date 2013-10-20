@@ -484,7 +484,7 @@ attr		:= [attr]
 			 */
 			this.pt = {
 				id: 		/^#([\w-]+)/,
-				class:		/^\.([\w-]+)/,
+				"class":	/^\.([\w-]+)/,
 				tag:		/^([\w-]+)/,
 				blank:		/^\s+/,
 				tilde:		/^~\s+?/,
@@ -646,7 +646,7 @@ attr		:= [attr]
 				var r = null;
 				if((r = this.match(this.pt.id)) != null)
 					e = Query.getById(r, this.context, parent, nList);
-				else if((r = this.match(this.pt.class)) != null)
+				else if((r = this.match(this.pt["class"])) != null)
 					e = Query.getByClass(r, this.context, parent, nList);
 				else
 				{
