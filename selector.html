@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+	<head></head>
+	<body>
+		<script type="text/javascript" src="piou-selector.js"></script>
+		
+		<div id="ident" class="class2" data-exp="2 * 8">
+			ident
+			<p id="p1">
+				p
+				<i>
+					i
+				</i>
+			</p>
+		</div>
+		empty
+		<div class="class" id="toto">
+			class
+			<p id="p2">
+				p
+				<i id="wesh">
+					i
+				</i>
+				
+			</p>
+			<div class="class">
+				class
+			</div>
+		</div>
+		empty
+		<div class="class">
+			class
+			<p id="p3">
+				p
+				<i class="italic">
+					i
+				</i>
+			</p>
+		</div>
+		<div>
+			
+		</div>
+		
+		<script>
+			
+			// var n = piou.selector("div");
+			// var n = piou.selector(".class");
+			// var n = piou.selector("#ident");
+			// var n = piou.selector("div#ident");
+			// var n = piou.selector("div.class");
+			// var n = piou.selector(".class#toto");
+			// var n = piou.selector("#ident.class2");
+			// var n = piou.selector("div#ident.class2");
+			//var n = piou.selector("div.class#toto");
+			// var n = piou.selector("div p");
+			// var n = piou.selector("div p i");
+			// var n = piou.selector("div p .italic");
+			// var n = piou.selector("div p i.italic");
+			// var n = piou.selector("div p i#wesh");
+			// var n = piou.selector("div #wesh");
+			// var n = piou.selector("[class^=clas]");
+			// var n = piou.selector("div > p > i");
+			// var n = piou.selector("#ident[data-exp~=2 * 8]");
+			//var n = piou.selector("div, i");
+			
+			console.log(n);
+			if(n.length > 0)
+			{
+				for(var i = 0, iMax = n.length; i < iMax; ++i)
+				{
+					n[i].style.backgroundColor = "#DFDFDF";
+					n[i].style.fontWeight = "bold";
+				}
+			}
+
+		</script>
+	</body>
+</html>
