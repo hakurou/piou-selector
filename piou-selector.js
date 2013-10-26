@@ -41,7 +41,7 @@ attr		:= [attr]
 		/**
 		 * Dit s'il est possible d'utiliser le querySelector/querySelectorAll
 		 */
-		qs: (typeof document.querySelector != "undefined"),
+		qs: false,//(typeof document.querySelector != "undefined"),
 		
 		/**
 		 * Retourne tous les elements dépendant d'un noeud
@@ -57,7 +57,8 @@ attr		:= [attr]
 				
 			var e = [];
 			this.each(elements, function(){
-				e.push(this);
+				if(this.nodeName.toLowerCase() != "html")
+					e.push(this);
 			});
 			return e;
 		},
@@ -143,21 +144,26 @@ attr		:= [attr]
 			else if(s.length == 4)
 			{
 				var v = this.regProtect(s[3]);
-				// @todo Mettre aussi class -> className
+				var a = null;
+				if(s[1] == "class")
+					a = node.className;
+				else
+					a = node.hasAttribute(s[1])
+					
 				if(s[2] == "=")
-					return (node.hasAttribute(s[1]) && node.getAttribute(s[1]) == s[3])
+					return (a && a == s[3])
 				else if(s[2] == "*=")
-					return (node.hasAttribute(s[1]) && node.getAttribute(s[1]).match(v))
+					return (a && a.match(v))
 				else if(s[2] == "|=")
-					return (node.hasAttribute(s[1]) && 
-						node.getAttribute(s[1]).match(new RegExp("-" + v + "-|^" + v + "-|-" + v + "$|^" + v + "$")));
+					return (a && 
+						a.match(new RegExp("-" + v + "-|^" + v + "-|-" + v + "$|^" + v + "$")));
 				else if(s[2] == "^=")
-					return (node.hasAttribute(s[1]) && node.getAttribute(s[1]).match("^" + v));
+					return (a && a.match("^" + v));
 				else if(s[2] == "$=")
-					return (node.hasAttribute(s[1]) && node.getAttribute(s[1]).match(v + "$"));
+					return (a && a.match(v + "$"));
 				else if(s[2] == "~=")
-					return (node.hasAttribute(s[1]) && 
-						node.getAttribute(s[1]).match(new RegExp("\s+" + v + "\s+|^" + v + "\s+|\s+" + v + "$|^" + v + "$")));;
+					return (a && 
+						a.match(new RegExp("\s+" + v + "\s+|^" + v + "\s+|\s+" + v + "$|^" + v + "$")));;
 			}
 			return false;
 		},
@@ -308,7 +314,7 @@ attr		:= [attr]
 		{
 			var tmp = [];
 			this.each(nList, function(){
-				if(this.className.match(new RegExp("\s*?" + s[1] + "\s*?")))
+				if(this.className.match(new RegExp("\s+" + s[1] + "\s+|^" + s[1] + "$|\s+" + s[1] + "$|^" + s[1] + "\s+")))
 					tmp.push(this);
 			});
 			return tmp;
@@ -402,6 +408,8 @@ attr		:= [attr]
 				var eList = this.getAll(context);
 				return this.getByPseu(s, context, parent, eList);
 			}
+			else
+				return tmp;
 		},
 		
 		/**
@@ -439,12 +447,76 @@ attr		:= [attr]
 		{
 			var tmp = [];
 			this.each(parent, function(){
-				var r = this.getByPseu(s, this);
+				var r = Query.getByPseu(s, this);
 				Query.each(r, function(){
 					tmp.push(this);
 				});
 			});
 			return tmp;
+		},
+		
+		/**
+		 * Retourne true si le noeud courant correpond a la regle nth
+		 * @param index					Position du noeud courant
+		 * @param m						Premier chiffre du nth
+		 * @param st					Pas de démarrage
+		 * @return Boolean				True si ca correspond, sinon false
+		 */
+		nthChild: function(index, m, st)
+		{
+			var r = null;
+			if((m == 0 | m == null) && st != null && st >= 0)
+				return (index == st);
+			else if(m == "-" && st != null)
+				return (-index + parseInt(st) >= 0);
+			else if(st != null)
+				return ((r = ((index - st) / m)) !== false && r >= 0 && parseInt(r) == r);
+			else if(st == null)
+				return ((index % m) == 0);	
+	
+			return false;
+		},
+		
+		/**
+		 * Retourne la position d'un noeud dans la liste de ses pairs
+		 * @param node					Noeud dont la position est a récupérer
+		 * @param inverse				Compte a partie du debut (false), sinon a partir de la fin (true)
+		 * @return Int					Position
+		 */
+		getNodePosition: function(node, name, inverse)
+		{
+			var pos = 0, nodes = 0, found = false;
+			this.each(node.parentNode.childNodes, function(){
+				if(name == null || node.nodeName.toLowerCase() == name)
+					nodes++;
+					
+				if(!found)
+					pos++;
+					
+				if(node == this && (name == null || node.nodeName.toLowerCase() == name))
+					found = true;
+			});
+			return (inverse) ? nodes - pos + 1: pos;
+		},
+		
+		/**
+		 * Test si le noeud courant correspond a tel index, tel type
+		 */
+		nth: function(node, value, inverse, name)
+		{
+			var i = 1, r = null;
+			i = Query.getNodePosition(node, name, (inverse) ? true: false);
+		
+			if((value == "even" && (i % 2) == 0) || 
+				(value == "odd" && (i % 2) != 0) ||
+				(value.match(/^\d+$/) && value == i))
+				return true;
+			else if((r = value.match(/^((-|\+)?(\d+)?)n((-|\+)\d+)?$/)))
+				return Query.nthChild(
+					i, 
+					(r[1] != null) ? r[1]: null, 
+					(r[4] != null) ? r[4]: null);	
+			return false;	
 		},
 		
 		/**
@@ -505,10 +577,10 @@ attr		:= [attr]
 			 * Amorce la collecte des noeuds
 			 * @return Array			Liste des noeuds trouvés			
 			 */
-			parse: function()
+			parse: function(parent, nList)
 			{	
 				this.match(this.pt.blank);
-				var r = this.parseExp();
+				var r = this.parseExp(parent, nList);
 				return (r != null && r.length == null) ? [r]: r;
 			},
 			
@@ -754,19 +826,74 @@ attr		:= [attr]
 			
 			return (n[i] == this);
 		},
-		"nth-child": function(){},
-		"nth-last-child": function(){},
-		"last-child": function(){},
-		"nth-of-type": function(){},
-		"nth-last-of-type": function(){},
-		"first-of-type": function(){},
-		"last-of-type": function(){},
-		"only-child": function(){},
+		
+		"nth-child": function(value){
+			return Query.nth(this, value);
+		},
+		
+		"nth-last-child": function(value){
+			return Query.nth(this, value, true);
+		},
+		
+		"last-child": function(){
+			var n = this.parentNode.childNodes;
+			for(var i = n.length - 1; i > 0; --i)
+				if(n[i].nodeType == 1)
+					break;
+			
+			return (n[i] == this);
+		},
+		
+		"nth-of-type": function(value){
+			return Query.nth(this, value, false, this.nodeName.toLowerCase());
+		},
+		
+		"nth-last-of-type": function(value){
+			return Query.nth(this, value, true, this.nodeName.toLowerCase());
+		},
+		
+		"first-of-type": function(){
+			var n = this.parentNode.childNodes;
+			for(var i = 0, iMax = n.length; i < iMax; ++i)
+				if(n[i].nodeType == 1 && this.nodeName.toLowerCase() == n[i].nodeName.toLowerCase())
+					break;
+			
+			return (n[i] == this);
+		},
+		
+		"last-of-type": function(){
+			var n = this.parentNode.childNodes;
+			for(var i = n.length - 1; i >= 0; --i)
+				if(n[i].nodeType == 1 && this.nodeName.toLowerCase() == n[i].nodeName.toLowerCase())
+					break;
+			
+			return (n[i] == this);
+		},
+		
+		"only-child": function(){
+			var nbNodes = 0;
+			Query.each(this.parentNode.childNodes, function(){
+				nbNodes++;
+			})
+			
+			return (nbNodes == 1);
+		},
+		
 		"empty": function(){
 			return (this.childNodes.length == 0);
 		},
-		"not": function(){},
-		"checked": function(){}
+		
+		"not": function(value){
+			var p = new Parser(value, document);
+			return (p.parse(null, this).length == 0)
+		},
+		
+		"checked": function(){
+			if(this.checked)
+				return true;
+			else
+				return false;
+		}
 	};
 	
 	selector.version = "1.0.0";
