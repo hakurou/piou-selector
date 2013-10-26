@@ -41,7 +41,7 @@ attr		:= [attr]
 		/**
 		 * Dit s'il est possible d'utiliser le querySelector/querySelectorAll
 		 */
-		qs: false,//(typeof document.querySelector != "undefined"),
+		qs: (typeof document.querySelector != "undefined"),
 		
 		/**
 		 * Retourne tous les elements dépendant d'un noeud
