@@ -529,7 +529,7 @@ attr		:= [attr]
 			if(eList == null)
 				return;
 			
-			if(eList.length == null)
+			if(eList.length == null || eList.nodeType != null)
 				eList = [eList];
 			
 			if(eList.length > 0)
@@ -800,7 +800,7 @@ attr		:= [attr]
 		for(var i in parts)
 		{
 			var p = new Parser(parts[i], context);
-			var tmp = p.parse();
+			var tmp = p.parse();console.log(tmp);
 			Query.each(tmp, function(){
 				nodes.push(this);
 			});
