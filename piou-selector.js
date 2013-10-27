@@ -148,7 +148,7 @@ attr		:= [attr]
 				if(s[1] == "class")
 					a = node.className;
 				else
-					a = node.hasAttribute(s[1])
+					a = node.getAttribute(s[1])
 					
 				if(s[2] == "=")
 					return (a && a == s[3])
